@@ -7,6 +7,8 @@ WORKDIR /usr/src/app
 # Set environment variables for configuration
 ENV MQTT_PORT=1883
 ENV MQTT_TOPIC=battery/reportEquip
+ENV MQTT_USERNAME=your_mqtt_username
+ENV MQTT_PASSWORD=your_mqtt_password
 ENV HEARTBEAT_INTERVAL=60
 ENV RECONNECT_DELAY=60
 ENV APP_CODE=ASGOFT
