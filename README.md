@@ -11,7 +11,10 @@ Run using:
 docker run -d \
   -e MQTT_BROKER='192.168.1.2' \
   -e MQTT_PORT='1883' \
-  -e DEVICE_ID='DEVICE ID FROM APP'
+  -e MQTT_TOPIC='battery/reportEquip' \
+  -e MQTT_USERNAME='your_mqtt_username' \
+  -e MQTT_PASSWORD='your_mqtt_password' \
+  -e DEVICE_ID='DEVICE ID FROM APP' \
   -e APP_CODE='ASGOFT' \
   -e LOGIN_NAME='test@example.com' \
   -e PASSWORD='YourPassword' \
