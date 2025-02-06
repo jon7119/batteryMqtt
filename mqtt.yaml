@@ -1,0 +1,92 @@
+sensor:
+  - name: "StorCube Battery Status"
+    state_topic: "battery/reportEquip"
+    value_template: "{{ value_json.storcube_battery_status }}"
+
+  - name: "StorCube Total PV1 Power"
+    state_topic: "battery/reportEquip"
+    value_template: "{{ value_json.storcube_totalPv1power }}"
+    unit_of_measurement: "W"
+
+  - name: "StorCube Total Inverter Power"
+    state_topic: "battery/reportEquip"
+    value_template: "{{ value_json.storcube_totalInvPower }}"
+    unit_of_measurement: "W"
+
+  - name: "StorCube Battery Temperature"
+    state_topic: "battery/reportEquip"
+    value_template: "{{ value_json.storcube_temp }}"
+    unit_of_measurement: "°C"
+
+  - name: "StorCube PV1 Power"
+    state_topic: "battery/reportEquip"
+    value_template: "{{ value_json.storcube_pv1power }}"
+    unit_of_measurement: "W"
+
+  - name: "StorCube PV2 Power"
+    state_topic: "battery/reportEquip"
+    value_template: "{{ value_json.storcube_pv2power }}"
+    unit_of_measurement: "W"
+
+  - name: "StorCube Battery Capacity"
+    state_topic: "battery/reportEquip"
+    value_template: "{{ value_json.storcube_capacity }}"
+    unit_of_measurement: "wh"
+
+  - name: "StorCube Battery SOC"
+    state_topic: "battery/reportEquip"
+    value_template: "{{ value_json.storcube_soc }}"
+    unit_of_measurement: "%"
+
+  - name: "StorCube Battery Voltage"
+    state_topic: "battery/reportEquip"
+    value_template: "{{ value_json.storcube_voltage }}"
+    unit_of_measurement: "V"
+
+  - name: "StorCube Battery Current"
+    state_topic: "battery/reportEquip"
+    value_template: "{{ value_json.storcube_current }}"
+    unit_of_measurement: "A"
+
+  - name: "StorCube Charge Status"
+    state_topic: "battery/reportEquip"
+    value_template: "{{ value_json.storcube_chargeStatus }}"
+
+  - name: "StorCube Discharge Power"
+    state_topic: "battery/reportEquip"
+    value_template: "{{ value_json.storcube_dischargePower }}"
+    unit_of_measurement: "W"
+
+  - name: "StorCube Grid Power"
+    state_topic: "battery/reportEquip"
+    value_template: "{{ value_json.storcube_gridPower }}"
+    unit_of_measurement: "W"
+
+  - name: "StorCube Inverter Efficiency"
+    state_topic: "battery/reportEquip"
+    value_template: "{{ value_json.storcube_efficiency }}"
+    unit_of_measurement: "%"
+
+  - name: "StorCube System Frequency"
+    state_topic: "battery/reportEquip"
+    value_template: "{{ value_json.storcube_frequency }}"
+    unit_of_measurement: "Hz"
+
+  - name: "StorCube Is Working"
+    state_topic: "battery/reportEquip"
+    value_template: "{{ value_json.storcube_isWork }}"
+
+  - name: "StorCube Plug Power"
+    state_topic: "battery/reportEquip"
+    value_template: "{{ value_json.storcube_plugPower }}"
+    unit_of_measurement: "W"
+
+  - name: "StorCube Total Capacity"
+    state_topic: "battery/reportEquip"
+    value_template: "{{ value_json.storcube_totalCapacity }}"
+    unit_of_measurement: "%"
+
+  - name: "StorCube Total PV2 Power"
+    state_topic: "battery/reportEquip"
+    value_template: "{{ value_json.storcube_totalPv2power }}"
+    unit_of_measurement: "W"
