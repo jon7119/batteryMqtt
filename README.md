@@ -17,7 +17,8 @@ docker run -d \
   -e PASSWORD='YourPassword' \
   --name battery-mqtt-client battery-mqtt-client
 ```
-
+Use echo "export app_code = 'storcube'" >> ~/.bashrc for a Storcube battery
+``
 Alternatively edit the configuration section and run the script directly 
 
 ### Configuration Parameters
