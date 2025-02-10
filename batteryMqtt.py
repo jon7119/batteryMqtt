@@ -16,6 +16,8 @@ def get_env_variable(var_name):
 broker = get_env_variable('MQTT_BROKER')
 port = int(os.getenv('MQTT_PORT', 1883))
 topic = os.getenv('MQTT_TOPIC', 'battery/reportEquip')
+mqtt_username = get_env_variable('MQTT_USERNAME')  # ⬅️ Ajout du username MQTT
+mqtt_password = get_env_variable('MQTT_PASSWORD')  # ⬅️ Ajout du password MQTT
 ws_uri = "ws://baterway.com:9501/equip/info/"
 token_url = "http://baterway.com/api/user/app/login"
 heartbeat_interval = int(os.getenv('HEARTBEAT_INTERVAL', 60))
@@ -34,13 +36,14 @@ deviceId = get_env_variable('DEVICE_ID')
 print(f"MQTT Broker: {broker}")
 print(f"MQTT Port: {port}")
 print(f"MQTT Topic: {topic}")
+print(f"MQTT Username: {mqtt_username}")  # ⬅️ Affichage du username MQTT
+print(f"MQTT Password: {'*' * len(mqtt_password)}")  # ⬅️ Masquer le mot de passe en affichage
 print(f"WebSocket URI: {ws_uri}")
 print(f"Token URL: {token_url}")
 print(f"Heartbeat Interval: {heartbeat_interval}")
 print(f"Reconnect Delay: {reconnect_delay}")
 print(f"App Code: {app_code}")
 print(f"Login Name: {login_name}")
-print(f"Password: {password}")
 print(f"Token Credentials: {token_credentials}")
 print(f"Device ID: {deviceId}")
 
@@ -59,9 +62,10 @@ def get_auth_token():
         raise Exception(f"HTTP error during token fetch: Status {response.status_code}")
 
 
-# MQTT Connection Setup
+# MQTT Connection Setup with Authentication
 def connect_mqtt():
     client = mqtt_client.Client(mqtt_client.CallbackAPIVersion.VERSION1)
+    client.username_pw_set(mqtt_username, mqtt_password)  # ⬅️ Authentification MQTT
     client.connect(broker, port)
     return client
 
