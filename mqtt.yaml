@@ -1,0 +1,147 @@
+sensor:
+  # 🔋 Battery Information
+  - name: "StorCube Battery Status"
+    state_topic: "battery/reportEquip"
+    value_template: "{{ value_json.storcube_battery_status }}"
+    icon: "mdi:battery"
+
+  - name: "StorCube Battery Capacity"
+    state_topic: "battery/reportEquip"
+    value_template: "{{ value_json.storcube_totalCapacity }}"
+    unit_of_measurement: "Wh"
+    device_class: "battery"
+    state_class: "measurement"
+    icon: "mdi:battery-high"
+
+  - name: "StorCube Battery SOC"
+    state_topic: "battery/reportEquip"
+    value_template: "{{ value_json.storcube_list[0].storcube_soc }}"
+    unit_of_measurement: "%"
+    device_class: "battery"
+    state_class: "measurement"
+    icon: "mdi:battery-charging"
+
+  - name: "StorCube Battery Temperature"
+    state_topic: "battery/reportEquip"
+    value_template: "{{ value_json.storcube_list[0].storcube_temp }}"
+    unit_of_measurement: "°C"
+    device_class: "temperature"
+    state_class: "measurement"
+    icon: "mdi:thermometer"
+
+  # ☀️ Solar Panel Information
+  - name: "StorCube PV1 Power"
+    state_topic: "battery/reportEquip"
+    value_template: "{{ value_json.storcube_list[0].storcube_pv1power }}"
+    unit_of_measurement: "W"
+    device_class: "power"
+    state_class: "measurement"
+    icon: "mdi:solar-power"
+
+  - name: "StorCube PV2 Power"
+    state_topic: "battery/reportEquip"
+    value_template: "{{ value_json.storcube_list[0].storcube_pv2power }}"
+    unit_of_measurement: "W"
+    device_class: "power"
+    state_class: "measurement"
+    icon: "mdi:solar-power"
+
+  - name: "StorCube Total Solar Power"
+    state_topic: "battery/reportEquip"
+    value_template: "{{ (value_json.storcube_totalPv1power | float) + (value_json.storcube_totalPv2power | float) }}"
+    unit_of_measurement: "W"
+    device_class: "power"
+    state_class: "measurement"
+    icon: "mdi:solar-power"
+
+  # ⚡ Inverter & Grid Information
+  - name: "StorCube Inverter Power"
+    state_topic: "battery/reportEquip"
+    value_template: "{{ value_json.storcube_list[0].storcube_invPower }}"
+    unit_of_measurement: "W"
+    device_class: "power"
+    state_class: "measurement"
+    icon: "mdi:power"
+
+  - name: "StorCube Plug Power"
+    state_topic: "battery/reportEquip"
+    value_template: "{{ value_json.storcube_plugPower }}"
+    unit_of_measurement: "W"
+    device_class: "power"
+    state_class: "measurement"
+    icon: "mdi:power-plug"
+
+  - name: "StorCube Charge Status"
+    state_topic: "battery/reportEquip"
+    value_template: "{{ value_json.storcube_chargeStatus }}"
+    icon: "mdi:battery-charging"
+
+  - name: "StorCube Discharge Power"
+    state_topic: "battery/reportEquip"
+    value_template: "{{ value_json.storcube_dischargePower }}"
+    unit_of_measurement: "W"
+    device_class: "power"
+    state_class: "measurement"
+    icon: "mdi:battery-arrow-down"
+
+  # 🔧 Equipment Information
+  - name: "StorCube Equipment Model"
+    state_topic: "battery/outputEquip"
+    value_template: "{{ value_json.equip_ModelCode }}"
+    icon: "mdi:cube"
+
+  - name: "StorCube Output Type"
+    state_topic: "battery/outputEquip"
+    value_template: "{{ value_json.outputType }}"
+    icon: "mdi:flash"
+
+  - name: "StorCube Output Power"
+    state_topic: "battery/reportEquip"
+    value_template: "{{ value_json.outputPower }}"
+    unit_of_measurement: "W"
+    device_class: "power"
+    state_class: "measurement"
+    icon: "mdi:flash"
+
+  - name: "StorCube Main Equip ID"
+    state_topic: "battery/reportEquip"
+    value_template: "{{ value_json.storcube_mainEquipId }}"
+    icon: "mdi:identifier"
+
+  - name: "StorCube Equip ID"
+    state_topic: "battery/reportEquip"
+    value_template: "{{ value_json.storcube_list[0].storcube_equipId }}"
+    icon: "mdi:identifier"
+
+  - name: "StorCube Is Working"
+    state_topic: "battery/reportEquip"
+    value_template: "{{ value_json.storcube_list[0].storcube_isWork }}"
+    icon: "mdi:cog"
+
+  # 🔄 Firmware Information
+  - name: "StorCube Firmware Version (Latest)"
+    state_topic: "battery/firmwareEquip"
+    value_template: "{{ value_json.storcube_last_BigVersion }}"
+    icon: "mdi:tag"
+
+  - name: "StorCube Firmware Version (Current)"
+    state_topic: "battery/firmwareEquip"
+    value_template: "{{ value_json.storcube_current_BigVersion | default('Unknown') }}"
+    icon: "mdi:tag"
+
+  - name: "StorCube Firmware Update Available"
+    state_topic: "battery/firmwareEquip"
+    value_template: "{{ value_json.storcube_upgrade_Available }}"
+    #device_class: "update"
+    icon: "mdi:update"
+
+  - name: "StorCube Firmware Needs Update"
+    state_topic: "battery/firmwareEquip"
+    value_template: "{{ 'Yes' if value_json.storcube_upgrade else 'No' }}"
+    icon: "mdi:alert"
+
+button:
+  - name: "StorCube Firmware Update"
+    command_topic: "battery/command"
+    payload_press: '{"action": "update_firmware"}'
+    icon: "mdi:cloud-upload"
