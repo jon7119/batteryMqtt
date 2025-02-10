@@ -1,6 +1,6 @@
 Client de la batterie MQTT
 
-Script local pour récupérer Data pour ASGOFT ASE 1000 et les variantes connexes de la batterie solaire.
+Script local pour récupérer Data pour ASGOFT ASE 1000 et les variantes connexes de la batterie solaire Storcube .
 
 Créer une image docker en utilisant
 
