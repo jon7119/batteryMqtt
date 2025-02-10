@@ -1,13 +1,13 @@
-# Battery MQTT Client
-Local script to fetch Data for ASGOFT ASE 1000 and related variants of solar battery.
+Client de la batterie MQTT
 
-Create a docker image using
-```
+Script local pour récupérer Data pour ASGOFT ASE 1000 et les variantes connexes de la batterie solaire.
+
+Créer une image docker en utilisant
+
 docker build -t battery-mqtt-client .
-```
 
-Run using:
-```
+Exécuter en utilisant:
+
 docker run -d \
   -e MQTT_BROKER='192.168.1.2' \
   -e MQTT_PORT='1883' \
@@ -16,56 +16,52 @@ docker run -d \
   -e LOGIN_NAME='test@example.com' \
   -e PASSWORD='YourPassword' \
   --name battery-mqtt-client battery-mqtt-client
-```
 
-Alternatively edit the configuration section and run the script directly 
+Sinon, modifier la section de configuration et exécuter le script directement
+Paramètres de configuration
 
-### Configuration Parameters
+Cette application peut être configurée par les variables d'environnement suivantes. Veuillez noter que certains d'entre eux sont obligatoires pour que l'application fonctionne correctement:
 
-This application can be configured through the following environment variables. Please note that some of these are mandatory for the application to function correctly:
+    MQTT_BROKER(obligatoire):
+        Description : L'adresse IP ou le nom d'hôte du courtier MQTT.
+        Par défaut : Néant (doit être fourni).
 
-- **`MQTT_BROKER`** (mandatory): 
-  - **Description**: The IP address or hostname of the MQTT broker.
-  - **Default**: None (must be provided).
+    MQTT_PORT(facultatif):
+        Description : Le numéro de port sur lequel le courtier MQTT écoute.
+        Par défaut : 1883.
 
-- **`MQTT_PORT`** (optional): 
-  - **Description**: The port number on which the MQTT broker is listening.
-  - **Default**: `1883`.
+    MQTT_TOPIC(facultatif):
+        Description : Le thème MQTT où les messages seront publiés.
+        Par défaut : battery/reportEquip.
 
-- **`MQTT_TOPIC`** (optional): 
-  - **Description**: The MQTT topic where messages will be published.
-  - **Default**: `battery/reportEquip`.
+    WS_URI(facultatif):
+        Description : L'URI complet pour établir la connexion WebSocket.
+        Par défaut : ws://baterway.com:9501/equip/info/.
 
-- **`WS_URI`** (optional): 
-  - **Description**: The full URI for establishing the WebSocket connection.
-  - **Default**: `ws://baterway.com:9501/equip/info/`.
+    TOKEN_URL(obligatoire):
+        Description : L'URL pour récupérer le jeton d'autorisation requis pour l'authentification WebSocket.
+        Par défaut : http://baterway.com/api/user/app/login.
 
-- **`TOKEN_URL`** (mandatory): 
-  - **Description**: The URL to fetch the authorization token required for WebSocket authentication.
-  - **Default**: `http://baterway.com/api/user/app/login`.
+    HEARTBEAT_INTERVAL(facultatif):
+        Description : L'intervalle en secondes entre chaque message de battement cardiaque envoyé pour maintenir la connexion WebSocket.
+        Par défaut : 60secondes.
 
-- **`HEARTBEAT_INTERVAL`** (optional): 
-  - **Description**: The interval in seconds between each heartbeat message sent to maintain the WebSocket connection.
-  - **Default**: `60` seconds.
+    RECONNECT_DELAY(facultatif):
+        Description : Le retard en quelques secondes avant de tenter de se reconnecter après une perte de connexion.
+        Par défaut : 60secondes.
 
-- **`RECONNECT_DELAY`** (optional): 
-  - **Description**: The delay in seconds before attempting to reconnect after a connection loss.
-  - **Default**: `60` seconds.
+    APP_CODE(obligatoire):
+        Description : Le code de demande utilisé dans le cadre du processus d'authentification pour aller chercher le jeton. Batterie ASGOFT ou Storcube)
+        Par défaut : ASGOFT.
 
-- **`APP_CODE`** (mandatory): 
-  - **Description**: The application code used as part of the authentication process to fetch the token.(Battery ASGOFT or Storcube)
-  - **Default**: `ASGOFT`.
+    LOGIN_NAME(obligatoire):
+        Description : Le nom de connexion utilisé en conjonction avec PASSWORDà des fins d'authentification.
+        Par défaut : Néant (doit être fourni).
 
-- **`LOGIN_NAME`** (mandatory): 
-  - **Description**: The login name used in conjunction with `PASSWORD` for authentication purposes.
-  - **Default**: None (must be provided).
+    PASSWORD(obligatoire):
+        Description : Le mot de passe correspondant à la LOGIN_NAMEà des fins d'authentification.
+        Par défaut : Néant (doit être fourni).
 
-- **`PASSWORD`** (mandatory): 
-  - **Description**: The password corresponding to the `LOGIN_NAME` for authentication purposes.
-  - **Default**: None (must be provided).
-
-- **`DEVICE_ID`** (mandatory): 
-  - **Description**: The ID of the device to be fetched. Is displayed in the A-Solar app.
-  - **Default**: None (must be provided).
-
-
+    DEVICE_ID(obligatoire):
+        Description : L'ID du dispositif à récupérer. Est affiché dans l'application A-Solar.
+        Par défaut : Néant (doit être fourni).
