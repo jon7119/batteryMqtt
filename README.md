@@ -53,7 +53,7 @@ This application can be configured through the following environment variables. 
   - **Default**: `60` seconds.
 
 - **`APP_CODE`** (mandatory): 
-  - **Description**: The application code used as part of the authentication process to fetch the token.
+  - **Description**: The application code used as part of the authentication process to fetch the token.(Battery ASGOFT or Storcube)
   - **Default**: `ASGOFT`.
 
 - **`LOGIN_NAME`** (mandatory): 
