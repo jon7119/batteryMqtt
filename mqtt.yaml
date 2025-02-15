@@ -117,7 +117,12 @@ sensor:
     state_topic: "battery/reportEquip"
     value_template: "{{ value_json.storcube_list[0].storcube_isWork }}"
     icon: "mdi:cog"
-
+  - name: "StorCube Seuil décharge"
+    state_topic: "battery/outputEquip"
+    value_template: "{{ value_json[0].reserved }}"
+    unit_of_measurement: "%"
+    icon: "mdi:battery"
+    
   # 🔄 Firmware Information
   - name: "StorCube Firmware Version (Latest)"
     state_topic: "battery/firmwareEquip"
