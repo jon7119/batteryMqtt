@@ -167,3 +167,20 @@ button:
       - "800"
     command_template: '{"power": {{ value }}}'
     icon: "mdi:flash"
+    
+  - name: "StorCube Seuil décharge"
+    state_topic: "battery/threshold_status"
+    value_template: "{{ value_json.threshold }}"
+    command_topic: "battery/set_threshold"
+    options: 
+      - "50"
+      - "55"
+      - "60"
+      - "65"
+      - "70"
+      - "75"
+      - "80"
+      - "85"
+      - "90"
+    command_template: '{"reserved": {{ value }}}'
+    icon: "mdi:battery-charging-80"
