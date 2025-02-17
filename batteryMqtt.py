@@ -1,9 +1,24 @@
 import os
 import asyncio
 import websockets
+import logging
 import json
 import requests
+from datetime import datetime
 from paho.mqtt import client as mqtt_client
+
+# Configuration du logging
+logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s', level=logging.INFO)
+
+def log(message, level="info"):
+    timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    formatted_message = f"{timestamp} - {message}"
+    if level == "error":
+        logging.error(formatted_message)
+    elif level == "warning":
+        logging.warning(formatted_message)
+    else:
+        logging.info(formatted_message)
 
 # Fonction pour récupérer une variable d'environnement
 def get_env_variable(var_name):
