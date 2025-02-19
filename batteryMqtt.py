@@ -35,6 +35,7 @@ topic_output = os.getenv('MQTT_TOPIC_OUTPUT', 'battery/outputEquip')
 topic_firmware = os.getenv('MQTT_TOPIC_FIRMWARE', 'battery/firmwareEquip')
 topic_power = os.getenv('MQTT_TOPIC_POWER', 'battery/set_power')
 topic_output_power = os.getenv('MQTT_TOPIC_OUTPUT_POWER', 'battery/outputPower')
+topic_threshold = os.getenv('MQTT_TOPIC_THRESHOLD', 'battery/set_threshold')
 
 username = os.getenv('MQTT_USERNAME', None)
 password = os.getenv('MQTT_PASSWORD', None)
@@ -44,6 +45,7 @@ token_url = "http://baterway.com/api/user/app/login"
 firmware_url = "http://baterway.com/api/equip/version/need/upgrade"
 output_url = "http://baterway.com/api/scene/user/list/V2"
 set_power_url = "http://baterway.com/api/slb/equip/set/power"
+set_threshold_url = "http://baterway.com/api/scene/threshold/set"
 
 app_code = os.getenv('APP_CODE', 'Storcube')
 login_name = get_env_variable('LOGIN_NAME')
@@ -102,7 +104,45 @@ def set_power_value(token, new_power_value):
     except requests.RequestException as e:
         print(f"⚠️ Erreur lors de la modification de `power`: {e}")
         return False
-		
+
+# ✅ Fonction pour modifier le seuil de batterie (`threshold`)
+def set_threshold_value(token, new_threshold_value):
+    headers = {
+        "Authorization": token,
+        "Content-Type": "application/json",
+        "appCode": app_code
+    }
+
+    # ✅ Tester plusieurs clés possibles
+    payloads = [
+        {"reserved": str(new_threshold_value), "equipId": deviceId},
+        {"data": str(new_threshold_value), "equipId": deviceId},
+        {"threshold": str(new_threshold_value), "equipId": deviceId}
+    ]
+
+    for payload in payloads:
+        print(f"\n📡 Tentative de modification de `threshold` avec payload : {payload}")
+        try:
+            response = requests.post(set_threshold_url, headers=headers, json=payload)
+            response.raise_for_status()
+
+            # ✅ Vérification du succès de la requête
+            data = response.json()
+            if data.get("code") == 200:
+                print(f"✅ Seuil modifié à {new_threshold_value}% avec `{list(payload.keys())[0]}` !")
+                return True
+            else:
+                print(f"⚠️ API a renvoyé un échec : {data.get('message', 'Réponse inconnue')}")
+
+        except requests.HTTPError as http_err:
+            print(f"❌ Erreur HTTP {response.status_code}: {response.text}")
+        except requests.RequestException as err:
+            print(f"⚠️ Erreur lors de la modification de `threshold`: {err}")
+
+    print("❌ Aucun des formats testés n'a fonctionné.")
+    return False
+
+	
 # Récupération des informations de sortie (`outputEquip`)
 def get_output_info(token):
     headers = {"Authorization": token, "Content-Type": "application/json"}
@@ -126,7 +166,7 @@ def get_firmware_update_status(token):
         print(f"⚠️ Erreur récupération firmware: {e}")
         return {}
 
-# Connexion au broker MQTT
+# ✅ Connexion MQTT avec DEBUG des topics
 def connect_mqtt():
     client = mqtt_client.Client(mqtt_client.CallbackAPIVersion.VERSION2)
 
@@ -136,8 +176,8 @@ def connect_mqtt():
     def on_connect(client, userdata, flags, rc, properties=None):
         if rc == 0:
             print("✅ Connecté au broker MQTT!")
-            client.subscribe(topic_power)
-            print(f"📡 Souscription aux topics MQTT : {topic_power}")
+            client.subscribe([(topic_power, 0), (topic_threshold, 0)])
+            print(f"📡 Souscription forcée aux topics MQTT : {topic_power}, {topic_threshold}")
         else:
             print(f"❌ Erreur de connexion MQTT: Code {rc}")
 
@@ -147,7 +187,10 @@ def connect_mqtt():
     client.loop_start()
     return client
 
-# Gestion des commandes MQTT depuis Home Assistant
+# ✅ Gestion des commandes MQTT depuis Home Assistant
+# Liste pour éviter la boucle infinie en stockant les valeurs déjà publiées
+recent_threshold_updates = set()
+
 def on_message(client, userdata, message):
     try:
         print(f"📩 DEBUG: Message MQTT brut reçu sur `{message.topic}`: {message.payload}")
@@ -163,27 +206,59 @@ def on_message(client, userdata, message):
             print(f"❌ Erreur: Payload JSON invalide reçu: {message.payload.decode()} - Erreur: {e}")
             return
 
+        token = get_auth_token()
+        if not token:
+            print("❌ Impossible de récupérer un token.")
+            return
+
+        # ✅ Gestion de la commande `power`
         if "power" in payload:
             try:
                 new_power = int(payload["power"])
                 print(f"🔄 Requête reçue: Modifier `power` à {new_power}W via MQTT...")
 
-                token = get_auth_token()
-                if token:
-                    if set_power_value(token, new_power):
-                        print(f"✅ `power` mis à jour à {new_power}W !")
-                        client.publish(topic_output_power, json.dumps({"power": new_power}))
-                        print(f"📡 Confirmation publiée sur `{topic_output_power}` : {{'power': {new_power}}}")
-                    else:
-                        print("❌ Erreur lors de la modification de `power` via MQTT.")
+                if set_power_value(token, new_power):
+                    print(f"✅ `power` mis à jour à {new_power}W !")
+                    client.publish(topic_output_power, json.dumps({"power": new_power}), retain=True)
+                    print(f"📡 Confirmation publiée sur `{topic_output_power}` : {{'power': {new_power}}}")
                 else:
-                    print("❌ Impossible de récupérer un token.")
+                    print("❌ Erreur lors de la modification de `power` via MQTT.")
             except ValueError:
                 print(f"❌ Erreur: Valeur `power` invalide reçue: {payload['power']}")
-        else:
-            print(f"⚠️ Message reçu mais `power` non présent: {payload}")
+
+        # ✅ Gestion de la commande `threshold`
+        elif "threshold" in payload or "reserved" in payload:
+            try:
+                new_threshold = int(payload.get("threshold", payload.get("reserved")))
+
+                # ✅ Vérification pour éviter la boucle infinie
+                if new_threshold in recent_threshold_updates:
+                    print(f"⚠️ Seuil `{new_threshold}%` déjà mis à jour récemment, on ignore pour éviter la boucle infinie.")
+                    return
+
+                print(f"🔄 Requête reçue: Modifier `threshold` à {new_threshold}% via MQTT...")
+
+                if set_threshold_value(token, new_threshold):
+                    print(f"✅ `threshold` mis à jour à {new_threshold}% !")
+
+                    # ✅ Ajouter à la liste des valeurs récemment mises à jour
+                    recent_threshold_updates.add(new_threshold)
+
+                    # ✅ Supprimer après quelques secondes pour permettre une nouvelle mise à jour plus tard
+                    loop = asyncio.new_event_loop()
+                    asyncio.set_event_loop(loop)
+                    loop.call_later(5, recent_threshold_updates.remove, new_threshold)
+
+                    client.publish(topic_threshold, json.dumps({"threshold": new_threshold}), retain=True)
+                    print(f"📡 Confirmation publiée sur `{topic_threshold}` : {{'threshold': {new_threshold}}}")
+                else:
+                    print("❌ Erreur lors de la modification de `threshold` via MQTT.")
+            except ValueError:
+                print(f"❌ Erreur: Valeur `threshold` invalide reçue: {payload.get('threshold', payload.get('reserved'))}")
+
     except Exception as e:
         print(f"❌ Erreur traitement MQTT: {e}")
+
 
 # Fonction WebSocket pour récupérer les données de la batterie et du firmware
 async def websocket_to_mqtt():
@@ -232,10 +307,15 @@ async def websocket_to_mqtt():
                     except asyncio.TimeoutError:
                         print("⚠️ Pas de message WebSocket, envoi d'un signal heartbeat...")
                         await websocket.send(request_data)
-
+                    
+                    except websockets.ConnectionClosed:
+                        print("❌ Connexion WebSocket fermée, arrêt du processus.")
+                        break  # Arrête la boucle interne
+	
         except Exception as e:
             print(f"❌ Erreur WebSocket: {e}, tentative de reconnexion dans 5 secondes...")
-            await asyncio.sleep(5)
+            break
+			#await asyncio.sleep(5)
 
 # Fonction principale
 async def main():
