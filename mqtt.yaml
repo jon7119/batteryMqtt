@@ -151,7 +151,7 @@ button:
     payload_press: '{"action": "update_firmware"}'
     icon: "mdi:cloud-upload"
 
-  select:
+select:
   - name: "StorCube Output Power"
     state_topic: "battery/outputEquip"
     value_template: "{{ value_json.power }}"
