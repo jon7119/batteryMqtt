@@ -146,7 +146,7 @@ sensor:
     icon: "mdi:alert"
 
 button:
-  - name: "StorCube Firmware Update"
+    name: "StorCube Firmware Update"
     command_topic: "battery/command"
     payload_press: '{"action": "update_firmware"}'
     icon: "mdi:cloud-upload"
