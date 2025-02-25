@@ -12,9 +12,11 @@ docker run -d \
   -e MQTT_BROKER='192.168.1.2' \
   -e MQTT_PORT='1883' \
   -e DEVICE_ID='DEVICE ID FROM APP'
-  -e APP_CODE='ASGOFT' \
+  -e APP_CODE='Storcube' \
   -e LOGIN_NAME='test@example.com' \
   -e PASSWORD='YourPassword' \
+  -e MQTT_PASSWORD='test' \
+  -e MQTT_USERNAME='test' \
   --name battery-mqtt-client battery-mqtt-client
 
 Sinon, modifier la section de configuration et exécuter le script directement
