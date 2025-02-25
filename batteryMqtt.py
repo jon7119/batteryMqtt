@@ -290,8 +290,23 @@ async def websocket_to_mqtt():
                         print(f"📡 DEBUG: WebSocket message reçu ➝ {message}")
 
                         if message.strip():
-                            client.publish(topic_battery, message)
-                            print(f"📡 Données batterie publiées sur MQTT ➝ {message}")
+                            try:
+                                # ✅ Charger le message JSON
+                                json_data = json.loads(message)
+
+                                # ✅ Extraire uniquement les données sans l'ID
+                                if isinstance(json_data, dict):
+                                    equip_data = next(iter(json_data.values()), {})
+                                    clean_message = json.dumps(equip_data)
+
+                                    # 📡 Publier uniquement les données filtrées sur MQTT
+                                    client.publish(topic_battery, clean_message)
+                                    print(f"📡 Données batterie publiées sur MQTT ➝ {clean_message}")
+                                else:
+                                    print("⚠️ Format inattendu du message JSON.")
+
+                            except json.JSONDecodeError as e:
+                                print(f"❌ Erreur: Message JSON invalide reçu - {e}")
 
                             output_data = get_output_info(token)
                             firmware_data = get_firmware_update_status(token)
@@ -315,7 +330,7 @@ async def websocket_to_mqtt():
         except Exception as e:
             print(f"❌ Erreur WebSocket: {e}, tentative de reconnexion dans 5 secondes...")
             break
-			#await asyncio.sleep(5)
+
 
 # Fonction principale
 async def main():
