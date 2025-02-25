@@ -92,3 +92,44 @@
     value_template: "{{ value_json[0].reserved }}"
     unit_of_measurement: "%"
     icon: "mdi:battery"
+
+  button:
+      name: "StorCube Firmware Update"
+      command_topic: "battery/command"
+      payload_press: '{"action": "update_firmware"}'
+      icon: "mdi:cloud-upload"
+
+  select:
+  - name: "StorCube Output Power"
+    state_topic: "battery/outputEquip"
+    value_template: "{{ value_json.power }}"
+    command_topic: "battery/set_power"
+    options: 
+      - "100"
+      - "150"
+      - "200"
+      - "300"
+      - "500"
+      - "600"
+      - "700"
+      - "800"
+    command_template: '{"power": {{ value }}}'
+    icon: "mdi:flash"
+    
+
+  - name: "StorCube Seuil décharge"
+    state_topic: "battery/threshold_status"
+    value_template: "{{ value_json.threshold }}"
+    command_topic: "battery/set_threshold"
+    options: 
+      - "50"
+      - "55"
+      - "60"
+      - "65"
+      - "70"
+      - "75"
+      - "80"
+      - "85"
+      - "90"
+    command_template: '{"reserved": {{ value }}}'
+    icon: "mdi:battery-charging-80"
