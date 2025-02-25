@@ -88,6 +88,15 @@ si besoin d'arreter le script
 pkill -f batteryMqtt.py
 
 ````
+Etape 9 : si besoin de mettre à jour le script 
+
+être dans le dossier du script 
+
+````
+
+git pull origin main
+
+````
 
 Le script **Battery to MQTT** est maintenant installé et fonctionnel
 
