@@ -1,12 +1,9 @@
-sensor:
-  # 🔋 Battery Information
-  - name: "StorCube Battery Status"
-    state_topic: "battery/reportEquip"
-    value_template: "{{ value_json.list[0].soc }}"
-    unit_of_measurement: "%"
-    device_class: "battery"
-    state_class: "measurement"
-    icon: "mdi:battery"
+  sensor:
+    # 🔋 Battery Information
+    - name: "StorCube Battery Status"
+      state_topic: "battery/outputEquip"
+      value_template: "{{ 'online' if value_json[0].workStatus == 1 else 'offline' }}"
+      icon: "mdi:battery"
 
   - name: "StorCube Battery Capacity"
     state_topic: "battery/reportEquip"
