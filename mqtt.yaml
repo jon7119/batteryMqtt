@@ -2,7 +2,7 @@
     # 🔋 Battery Information
     - name: "StorCube Battery Status"
       state_topic: "battery/outputEquip"
-      value_template: "{{ 'online' if value_json[0].workStatus == 1 else 'offline' }}"
+      value_template: "{{ 'online' if value_json[0].fgOnline == 1 else 'offline' }}"
       icon: "mdi:battery"
 
   - name: "StorCube Battery Capacity"
@@ -105,6 +105,7 @@
     value_template: "{{ value_json.power }}"
     command_topic: "battery/set_power"
     options: 
+      - "1"
       - "100"
       - "150"
       - "200"
